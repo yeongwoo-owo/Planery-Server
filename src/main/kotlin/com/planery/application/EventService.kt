@@ -7,6 +7,7 @@ import com.planery.domain.event.Duration
 import com.planery.domain.event.Event
 import com.planery.domain.event.EventRepository
 import com.planery.domain.event.EventType
+import com.planery.domain.event.Todo
 import com.planery.domain.event.find
 import com.planery.domain.event.findByUserId
 import com.planery.domain.user.User
@@ -75,6 +76,20 @@ class EventService(
         event.type = eventType
         return event
             .also { logger.info { "이벤트 타입 변경: ${it.id}" } }
+    }
+
+    fun mark(userId: Long, eventId: Long): Event {
+        val event = validateAndGetEvent(userId, eventId)
+        (event.type as? Todo)?.doEvent() ?: return event.also { logger.warn { "이벤트 완료 실패: ${it.id}" } }
+        return event
+            .also { logger.info { "이벤트 완료: ${it.id}" } }
+    }
+
+    fun unmark(userId: Long, eventId: Long): Event {
+        val event = validateAndGetEvent(userId, eventId)
+        (event.type as? Todo)?.undoEvent() ?: return event.also { logger.warn { "이벤트 완료 취소 실패: ${it.id}" } }
+        return event
+            .also { logger.info { "이벤트 완료 취소: ${it.id}" } }
     }
 
     fun delete(userId: Long, eventId: Long) {

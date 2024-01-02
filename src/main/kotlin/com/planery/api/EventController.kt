@@ -84,6 +84,24 @@ class EventController(private val eventService: EventService) {
         return ResponseEntity.ok(EventResponse(event))
     }
 
+    @PostMapping("/{eventId}/mark")
+    fun doEvent(
+        @RequestAttribute loginId: Long,
+        @PathVariable eventId: Long,
+    ): ResponseEntity<EventResponse> {
+        val event = eventService.mark(loginId, eventId)
+        return ResponseEntity.ok(EventResponse(event))
+    }
+
+    @DeleteMapping("/{eventId}/mark")
+    fun undoEvent(
+        @RequestAttribute loginId: Long,
+        @PathVariable eventId: Long,
+    ): ResponseEntity<EventResponse> {
+        val event = eventService.unmark(loginId, eventId)
+        return ResponseEntity.ok(EventResponse(event))
+    }
+
     @DeleteMapping("/{eventId}")
     fun delete(
         @RequestAttribute loginId: Long,

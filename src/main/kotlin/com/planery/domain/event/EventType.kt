@@ -15,4 +15,12 @@ class Schedule : EventType()
 @Entity
 data class Todo(private var doneAt: LocalDateTime? = null) : EventType() {
     val isDone: Boolean get() = doneAt != null
+
+    fun doEvent() {
+        doneAt = LocalDateTime.now()
+    }
+
+    fun undoEvent() {
+        doneAt = null
+    }
 }
